@@ -52,9 +52,6 @@ func run(ctx context.Context, args []string) error {
 	if len(args) == 0 {
 		return errors.New("use ./wa --help")
 	}
-	if args[0] == "demo" && len(args) == 1 {
-		return demo(time.Now(), os.Stdout)
-	}
 	messagesPath := filepath.Join(stateDir, "messages.sqlite3")
 	switch args[0] {
 	case "read":
@@ -391,23 +388,4 @@ func printMessages(db *sql.DB, out io.Writer, id string, since time.Time, limit 
 		}
 	}
 	return nil
-}
-
-func demo(now time.Time, out io.Writer) error {
-	db, err := openMessages(":memory:")
-	if err != nil {
-		return err
-	}
-	defer db.Close()
-	const group = "120000000001@g.us"
-	for _, m := range []message{
-		{group, "demo-1", now.Add(-30 * time.Minute), "Maya", "Room B is booked for the demo at 15:00.", false},
-		{group, "demo-2", now.Add(-20 * time.Minute), "Sam", "I will bring the projector adapter.", false},
-		{group, "demo-3", now.Add(-10 * time.Minute), "Noa", "Draft schedule attached. Can someone confirm the Q&A slot?", true},
-	} {
-		if err := saveMessage(db, m); err != nil {
-			return err
-		}
-	}
-	return printMessages(db, out, group, now.Add(-time.Hour), 20)
 }

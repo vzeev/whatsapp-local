@@ -6,7 +6,6 @@ cd -- "$(dirname -- "$0")"
 if [ "$#" -eq 0 ] || [ "$1" = help ] || [ "$1" = --help ]; then
     cat <<'EOF'
 Usage:
-  ./wa demo
   ./wa pair
   ./wa groups
   ./wa watch GROUP_ID [GROUP_ID ...]

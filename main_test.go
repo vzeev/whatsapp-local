@@ -16,7 +16,7 @@ import (
 )
 
 func TestCollectMessageScope(t *testing.T) {
-	group := types.NewJID("120000000001", types.GroupServer)
+	group := types.NewJID("900000000001", types.GroupServer)
 	start := time.Unix(1800000000, 0).UTC()
 	starts := map[string]int64{group.String(): start.Unix()}
 	event := events.Message{
@@ -24,12 +24,12 @@ func TestCollectMessageScope(t *testing.T) {
 			MessageSource: types.MessageSource{Chat: group},
 			ID:            "msg-1",
 			Timestamp:     start,
-			PushName:      "Maya",
+			PushName:      "Test sender",
 		},
-		Message: &waE2E.Message{ImageMessage: &waE2E.ImageMessage{Caption: proto.String("Room B")}},
+		Message: &waE2E.Message{ImageMessage: &waE2E.ImageMessage{Caption: proto.String("Test caption")}},
 	}
 	got, ok := collectMessage(&event, starts)
-	if !ok || got.Text != "Room B" || !got.Attachment || got.Group != group.String() || got.Sender != "Maya" {
+	if !ok || got.Text != "Test caption" || !got.Attachment || got.Group != group.String() || got.Sender != "Test sender" {
 		t.Fatalf("expected collected caption, got %+v, %v", got, ok)
 	}
 	for _, tc := range []struct {
@@ -37,7 +37,7 @@ func TestCollectMessageScope(t *testing.T) {
 		change func(*events.Message)
 	}{
 		{"direct chat", func(m *events.Message) { m.Info.Chat = types.NewJID("1234567", types.DefaultUserServer) }},
-		{"unselected group", func(m *events.Message) { m.Info.Chat = types.NewJID("120000000002", types.GroupServer) }},
+		{"unselected group", func(m *events.Message) { m.Info.Chat = types.NewJID("900000000002", types.GroupServer) }},
 		{"before tracking", func(m *events.Message) { m.Info.Timestamp = start.Add(-time.Second) }},
 		{"disappearing", func(m *events.Message) { m.IsEphemeral = true }},
 		{"view once", func(m *events.Message) { m.IsViewOnce = true }},
@@ -60,7 +60,7 @@ func TestLocalReadWhileWriting(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	const group, other = "120000000001@g.us", "120000000002@g.us"
+	const group, other = "900000000001@g.us", "900000000002@g.us"
 	start := time.Unix(1800000000, 0).UTC()
 	if _, err := trackGroups(db, []string{group}, start.Unix()); err != nil {
 		t.Fatal(err)
