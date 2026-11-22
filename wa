@@ -1,0 +1,32 @@
+#!/bin/sh
+set -eu
+umask 077
+cd -- "$(dirname -- "$0")"
+
+if [ "$#" -eq 0 ] || [ "$1" = help ] || [ "$1" = --help ]; then
+    cat <<'EOF'
+Usage:
+  ./wa demo
+  ./wa pair
+  ./wa groups
+  ./wa watch GROUP_ID [GROUP_ID ...]
+  ./wa read GROUP_ID [-since 24h] [-limit 200]
+EOF
+    exit 0
+fi
+
+if [ -L .whatsapp ]; then
+    echo 'wa: .whatsapp must be a local directory' >&2
+    exit 1
+fi
+mkdir -p .whatsapp
+chmod 700 .whatsapp
+binary=.whatsapp/wa
+if [ ! -x "$binary" ] || [ main.go -nt "$binary" ] ||
+    [ go.mod -nt "$binary" ] || [ go.sum -nt "$binary" ]; then
+    build=$(mktemp .whatsapp/wa.XXXXXX)
+    trap 'rm -f -- "$build"' EXIT
+    CGO_ENABLED=1 go build -buildvcs=false -mod=readonly -o "$build" .
+    mv -f -- "$build" "$binary"
+fi
+exec "$binary" "$@"
