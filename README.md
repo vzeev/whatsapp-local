@@ -2,9 +2,27 @@
 
 Collect text from selected WhatsApp groups into a local SQLite file, then read or summarize it with Hermes or another assistant that can run shell commands. The collector uses the same library as the Hermes integration it was adapted from. It runs from one shell script and works without MCP, Docker, or a model API key. [whatsmeow](https://github.com/tulir/whatsmeow)
 
+## Install with a local Hermes agent
+
+Give Hermes the Git repository URL and this prompt.
+
+> Install WhatsApp Local from `<repository URL>`. Read its README and `.hermes/skills/whatsapp-local/SKILL.md`. Set it up on this computer, run the demo, and guide me through pairing in my private terminal. Then help me choose a test group and summarize a test message.
+
+Hermes uses its local terminal, clones the repo into `~/.local/share/whatsapp-local` by default, and can install the bundled skill into the current profile for future chats. You scan the QR code with the WhatsApp app on your phone. [Hermes setup and usage skill](.hermes/skills/whatsapp-local/SKILL.md)
+
+Once collection is running, ask Hermes to summarize a confirmed group ID and time window. For example, “Summarize the last 24 hours for WhatsApp group `120000000001@g.us`,” using your group’s ID.
+
+## Requirements
+
+- **Mac.** Install Go 1.26.9 or newer and Apple’s Command Line Tools with `xcode-select --install`. [Go downloads](https://go.dev/dl/), [Apple Command Line Tools](https://developer.apple.com/documentation/xcode/installing-the-command-line-tools)
+- **Linux.** Install Go 1.26.9 or newer and a C compiler. On Ubuntu or Debian, install the compiler with `sudo apt install build-essential`. [Go installation](https://go.dev/doc/install)
+- **Windows.** Run the Linux setup inside Ubuntu on WSL 2, with the checkout in Ubuntu’s home directory. The current script requires a Unix environment. [Microsoft WSL setup](https://learn.microsoft.com/windows/wsl/install)
+
+You also need Git to clone the repo and internet access for the first build. SQLite is bundled.
+
 ## Try it at the conference
 
-On macOS or Linux, install Go 1.26.9 or newer and a C compiler. On macOS, `xcode-select --install` installs the compiler. On Ubuntu or Debian, `sudo apt install build-essential` installs it. The first run downloads the Go dependencies and builds the tool. [Go downloads](https://go.dev/dl/)
+From the Git checkout, run the demo.
 
 ```sh
 ./wa demo
